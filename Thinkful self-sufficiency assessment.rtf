@@ -1,0 +1,150 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2706
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Arial-BoldMT;\f1\fswiss\fcharset0 Arial-BoldItalicMT;\f2\fswiss\fcharset0 ArialMT;
+}
+{\colortbl;\red255\green255\blue255;\red29\green35\blue39;\red255\green255\blue255;\red40\green40\blue41;
+\red251\green251\blue251;}
+{\*\expandedcolortbl;;\cssrgb\c14902\c18431\c20392;\cssrgb\c100000\c100000\c100000;\cssrgb\c20784\c20784\c21176;
+\cssrgb\c98824\c98824\c98824;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww37900\viewh19680\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\b\fs28 \cf0 1. \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Write a query that selects\'a0
+\f1\i column_name
+\f0\i0 \'a0and\'a0
+\f1\i data_type
+\f0\i0 \'a0from\'a0
+\f1\i information_schema.columns
+\f0\i0 .
+\f2\b0 \
+\
+
+\fs24 SELECT column_name, data_type\
+FROM information_schema.columns\
+WHERE table_name = 'naep';
+\fs28 \
+\
+\
+
+\f0\b 2. Write a query to select the first fifty records of the\'a0
+\f1\i naep
+\f0\i0 \'a0table.
+\f2\b0 \
+\
+
+\fs24 SELECT *\
+FROM naep\
+LIMIT 50;
+\fs28 \
+\pard\pardeftab720\sa360\partightenfactor0
+
+\fs24 \cf2 \cb3 \strokec2 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs28 \cf2 \cb3 \strokec2 \
+
+\f0\b 3. Write a query that returns summary statistics for\'a0avg_math_4_score\'a0by state. Do this by using aliases, such as\'a0\cf4 \cb5 \strokec4 COUNT(avg_math_4_score) as count_4\cf2 \cb3 \strokec2 , and repeat this for the remaining aliases\'a0avg_4,\'a0min_4, and\'a0max_4, for\'a0\cf4 \cb5 \strokec4 AVG\cf2 \cb3 \strokec2 ,\'a0\cf4 \cb5 \strokec4 MIN\cf2 \cb3 \strokec2 , and\'a0\cf4 \cb5 \strokec4 MAX\cf2 \cb3 \strokec2 , respectively. Finally, sort the results alphabetically by state name.
+\f2\b0 \
+\
+
+\fs24 SELECT COUNT(avg_math_4_score) AS count_4, \
+		AVG(avg_math_4_score) AS avg_4, \
+		MIN(avg_math_4_score) AS min_4, \
+		MAX(avg_math_4_score) AS max_4, \
+		state\
+FROM naep\
+GROUP BY state\
+ORDER BY state;\
+
+\fs28 \
+\
+
+\f0\b 4. Write a query that alters the previous query so that it returns only the summary statistics for\'a0avg_math_4_score\'a0by state with differences in max and min values that are greater than 30.
+\f2\b0 \
+\
+
+\fs24 SELECT state, COUNT(avg_math_4_score) as count_4, \
+              AVG(avg_math_4_score) as avg_4, \
+              MIN(avg_math_4_score) as min_4, \
+              MAX(avg_math_4_score) as max_4\
+FROM naep\
+GROUP BY state\
+HAVING MAX(avg_math_4_score) - MIN(avg_math_4_score) > 30;\
+
+\fs28 \
+\
+
+\f0\b 5. Write a query that returns the\'a0avg_math_4_score\'a0as the alias\'a0avg_score\'a0and the\'a0state\'a0as the alias\'a0bottom_10_states\'a0that lists the states in the bottom 10 for\'a0avg_math_4_score\'a0in the year 2000.
+\f2\b0 \
+\
+
+\fs24 SELECT avg_math_4_score::float AS avg_score, state AS bottom_10_states\
+FROM naep\
+WHERE year = '2000'\
+ORDER BY avg_math_4_score\
+LIMIT 10;\
+\
+
+\fs28 \
+
+\f0\b 6. Write a query that calculates the average\'a0avg_math_4_score\'a0rounded to the nearest 2 decimal places over all states in the year 2000. The resulting variable should still be named\'a0avg_math_4_score.
+\f2\b0 \
+\
+
+\fs24 SELECT round(AVG(avg_math_4_score),2) AS avg_math_4_score\
+FROM naep\
+WHERE year = '2000';\
+
+\fs28 \
+\
+
+\f0\b 7. Write a query that returns a field called\'a0below_250\'a0that lists all states with an\'a0avg_math_4_score\'a0less than 250, over all states in the year 2000
+\f2\b0 .\
+\
+
+\fs24 WITH AVR_ST AS \
+    (SELECT state, avg(avg_math_4_score) AS AVG_STATES\
+    FROM naep\
+    WHERE year = 2000\
+    GROUP BY state)\
+\
+SELECT state AS below_250\
+FROM AVR_ST\
+WHERE 250 > AVG_STATES;
+\fs28 \
+\
+\
+
+\f0\b 8. Write a query that returns a field called\'a0scores_missing_y2000\'a0that lists any states with missing values in the\'a0avg_math_4_score\'a0column of the\'a0naep\'a0data table for the year 2000.\
+
+\f2\b0 \
+
+\fs24 SELECT state AS scores_missing_y2000\
+FROM naep\
+WHERE year = '2000' AND avg_math_4_score is NULL;\
+
+\fs28 \
+\
+
+\f0\b 9. For this challenge, you're being asked to display the average math score alongside the total expenditure to see if there is any relationship between the two. You are not focusing on doing correlations in this challenge; rather, this challenge will test your skills with using\'a0
+\fs25\fsmilli12600 \cf4 \cb5 \strokec4 JOIN
+\fs28 \cf2 \cb3 \strokec2 .\
+\pard\pardeftab720\sa360\partightenfactor0
+\cf2 \cb3 \strokec2 \
+To accomplish your task, write a query that returns, for the year 2000, the\'a0state,\'a0avg_math_4_score, and\'a0total_expenditure\'a0fields from the\'a0naep\'a0table left outer joined on the\'a0finance\'a0table, using\'a0id\'a0as the key and ordered by\'a0total_expenditure, from largest to smallest.\
+Be sure to round\'a0avg_math_4_score\'a0to the nearest 2 decimal places, keeping the variable name as is using an alias, and then filter out\'a0
+\fs25\fsmilli12600 \cf4 \cb5 \strokec4 NULL
+\fs28 \cf2 \cb3 \strokec2 \'a0from\'a0avg_math_4_scores\'a0in order to see the results more clearly.
+\f2\b0\fs24 \
+
+\fs28 \
+
+\fs24 SELECT naep.state, ROUND(naep.avg_math_4_score, 2) AS avg_math_4_score, total_expenditure\
+FROM naep\
+LEFT OUTER JOIN finance\
+ON naep.id = finance.id\
+WHERE naep.year = '2000' AND avg_math_4_score IS NOT NULL\
+ORDER BY finance.total_expenditure DESC;
+\fs28 \
+\
+}
